@@ -71,12 +71,14 @@ function patchDelete(target, change) {
 
 function patchInsertText(target, change) {
   // TODO: Index should be within string
+  // TODO: Property should be string
 
   target.parent[target.key] = target.property.slice(0, change.index) + change.value + target.property.slice(change.index);
 }
 
 function patchDeleteText(target, change) {
   // TODO: Index should be within string
+  // TODO: Property should be string
   // TODO: value should exist
   // TODO: Need to check value being removed matches change
 
