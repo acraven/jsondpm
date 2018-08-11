@@ -95,12 +95,17 @@ describe('patch', () => {
 
     it('throws exception if trying to remove key with different value', () => {
       expect(() => { jsondp.patch({ foo: 'bar' }, [ { op: 'remove', location: ['foo'], value: 'foo' } ]); })
-        .to.throw('Remove mismatch, expecting \'foo\' with value \'foo\' but \'foo\' has value \'bar\'');
+        .to.throw('Remove mismatch, expecting \'foo\' with value @change but @actual was found instead.\n@change="foo"\n@actual="bar"');
     });
 
     it('throws exception if trying to remove key that doesn\'t exist', () => {
       expect(() => { jsondp.patch({ foo: 'bar' }, [ { op: 'remove', location: ['bar'], value: 'bar' } ]); })
         .to.throw('Remove mismatch, expecting \'bar\' with value \'bar\' but \'bar\' was not found');
+    });
+
+    it('throws exception if trying to remove non-matching object', () => {
+      expect(() => { jsondp.patch({ foo: { bar: 'foo' } }, [ { op: 'remove', location: ['foo'], value: { bar: 'myBar' } } ]); })
+        .to.throw('Remove mismatch, expecting \'foo\' with value @change but @actual was found instead.\n@change={"bar":"myBar"}\n@actual={"bar":"foo"}');
     });
   });
 
@@ -113,7 +118,7 @@ describe('patch', () => {
 
     it('throws exception if trying to remove key with different value', () => {
       expect(() => { jsondp.patch({ prop: { foo: 'bar' } }, [ { op: 'remove', location: ['prop', 'foo'], value: 'foo' } ]); })
-        .to.throw('Remove mismatch, expecting \'prop.foo\' with value \'foo\' but \'foo\' has value \'bar\'');
+        .to.throw('Remove mismatch, expecting \'prop.foo\' with value @change but @actual was found instead.\n@change="foo"\n@actual="bar"');
     });
 
     it('throws exception if trying to remove key that doesn\'t exist', () => {
@@ -131,7 +136,7 @@ describe('patch', () => {
 
     it('throws exception if trying to remove key with different value', () => {
       expect(() => { jsondp.patch({ prop: { child: { foo: 'bar' } } }, [ { op: 'remove', location: ['prop','child','foo'], value: 'foo' } ]); })
-        .to.throw('Remove mismatch, expecting \'prop.child.foo\' with value \'foo\' but \'foo\' has value \'bar\'');
+        .to.throw('Remove mismatch, expecting \'prop.child.foo\' with value @change but @actual was found instead.\n@change="foo"\n@actual="bar"');
     });
 
     it('throws exception if trying to remove key that doesn\'t exist', () => {
@@ -251,7 +256,17 @@ describe('patch', () => {
   
       expect(result).to.deep.equal({ foo: [] });
     });
-    
+
+    it('throws exception if trying to delete non-matching string', () => {
+      expect(() => { jsondp.patch({ foo: ['string'] }, [ { op: 'delete', location: ['foo'], index: 0, value: 'wrongString' } ]); })
+        .to.throw('Delete mismatch, expecting \'foo[0]\' with value @change but @actual was found instead.\n@change="wrongString"\n@actual="string"');
+    });
+
+    it('throws exception if trying to delete non-matching object', () => {
+      expect(() => { jsondp.patch({ foo: [{ bar: 'foo' }] }, [ { op: 'delete', location: ['foo'], index: 0, value: { bar: 'myBar' } } ]); })
+        .to.throw('Delete mismatch, expecting \'foo[0]\' with value @change but @actual was found instead.\n@change={"bar":"myBar"}\n@actual={"bar":"foo"}');
+    });
+
     // TODO: Throw exception if object being removed is different or not object
     // TODO: Throw exception if not array
     // TODO: Throw exception if index < 0

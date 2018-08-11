@@ -1,4 +1,5 @@
 const clone = require('clone');
+const deepEqual = require('deep-equal');
 const locationUtils = require('./location-utils');
 
 const patchOps = {
@@ -35,7 +36,7 @@ function locateTarget(obj, location) {
 
 function patchAdd(target, change) {
   if (target.property !== undefined) {
-    throw new Error(`Add mismatch, expecting to add '${locationUtils.serialise(change.location)}' with value '${change.value}' but '${target.key}' already exists with value '${target.property}'`);
+    throw new Error(`Add mismatch, expecting to add '${locationUtils.serialise(change.location)}' with value '${change.value}' but '${target.key}' already exists with value '${target.property}'.`);
   }
 
   target.parent[target.key] = clone(change.value);
@@ -43,12 +44,10 @@ function patchAdd(target, change) {
 
 function patchRemove(target, change) {
   if (target.property === undefined) {
-    throw new Error(`Remove mismatch, expecting '${locationUtils.serialise(change.location)}' with value '${change.value}' but '${target.key}' was not found`);
-  } else if (target.property !== change.value) {
-    throw new Error(`Remove mismatch, expecting '${locationUtils.serialise(change.location)}' with value '${change.value}' but '${target.key}' has value '${target.property}'`);
+    throw new Error(`Remove mismatch, expecting '${locationUtils.serialise(change.location)}' with value '${change.value}' but '${target.key}' was not found.`);
+  } else if (!deepEqual(target.property, change.value)) {
+    throw new Error(`Remove mismatch, expecting '${locationUtils.serialise(change.location)}' with value @change but @actual was found instead.\n@change=${JSON.stringify(change.value)}\n@actual=${JSON.stringify(target.property)}`);
   }
-
-  // TODO: Check object being removed exists (above just checks value type)
 
   delete target.parent[target.key];
 }
@@ -62,7 +61,10 @@ function patchInsert(target, change) {
 function patchDelete(target, change) {
   // TODO: Should be type array, cannot be undefined or null, object, string etc.
 
-  // TODO: Need to check value being removed matches change
+  if (!deepEqual(target.property[change.index], change.value)) {
+    throw new Error(`Delete mismatch, expecting '${locationUtils.serialise(change.location)}[${change.index}]' with value @change but @actual was found instead.\n@change=${JSON.stringify(change.value)}\n@actual=${JSON.stringify(target.property[change.index])}`);
+  }
+
   target.property.splice(change.index, 1);
 }
 
