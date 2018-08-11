@@ -1,10 +1,15 @@
 language: node_js
-
 node_js:
-  - stable
-
+- stable
 install:
-  - yarn install
-
+- yarn install
 script:
-  - npm test
+- npm test
+deploy:
+  provider: npm
+  email: andrew@epworth-consulting.co.uk
+  api_key:
+    secure: PHT/qlJ73sv0WG5L6c2Gq1nVpkEZDMqxIy/R5Z/wJB16hWsTHCYgL4CHELSBv/bn8I9Cl3NmqvrXUQ3Dyn4z+II1T+bivqhiQ4wuckB6Oc9lxCgs5JgLUCP2SIoDP+LlBw00LfmUBE/nu4CQhH+ju4wgcQjj3GnWjXxWrBn8j+6Yex8h3hiBwGkNt0Uj4s4mhJqUm78CjY0y7RQNwF5LKP8yLEJwpKKSNTiKN3Eq+8fRASsjPrgm9FeVUYuAwohokc7+I4iRCG71XcVMgh2xXzLFQFKTWIWs2FEux3KG+Xtl3GFDK5o0Lp9sw9UCGlxOJjHzbk31P3J6PhhFcDposgI19uaTYuwQQlIDIykC1IIEHXIB1lzZVOEgk51dBgLtwZ9gFPwmUqbKD9rozZm9cuLDhueafMK5UQPIDH0kiDuLgKubXth9KforJ9wW90VdNTqUd0GhB6uuOjTW7cmvyWAorGnNGNl64S2hhGzx3r7sHjmTban29cwGLdwqqBd4mKUKqZh1sr2veF1ia0BhqHM9VxYCIEfIxo/Bu8gZV/sw1iDS31u7Dym8A36eo5aXiFn3/9e0JaNVXsBsgAfGQyFMPfLEQn+H3wsobMY24/OTw8OlvvSun6H4yTTaByAhMaEuZQrolAw9dgLQGU8pH1z7Z5Cn7cAJY8+AbrziN/w=
+  on:
+    tags: true
+    repo: acraven/jsondpm
