@@ -147,7 +147,7 @@ describe('patch', () => {
 
   describe('text insert', () => {
     it('returns original with added text', () => {
-      const result = jsondp.patch({ foo: '' }, [ { op: 'text', location: ['foo'], index: 0, insert: 'bar' } ]);
+      const result = jsondp.patch({ foo: '' }, [ { op: 'insert-text', location: ['foo'], index: 0, value: 'bar' } ]);
   
       expect(result).to.deep.equal({ foo: 'bar' });
     });
@@ -155,7 +155,7 @@ describe('patch', () => {
 
   describe('text delete', () => {
     it('returns original without removed text', () => {
-      const result = jsondp.patch({ foo: 'bar' }, [ { op: 'text', location: ['foo'], index: 0, delete: 'bar' } ]);
+      const result = jsondp.patch({ foo: 'bar' }, [ { op: 'delete-text', location: ['foo'], index: 0, value: 'bar' } ]);
 
       expect(result).to.deep.equal({ foo: '' });
     });
@@ -163,7 +163,10 @@ describe('patch', () => {
 
   describe('text replace with same length', () => {
     it('returns original with replaced text', () => {
-      const result = jsondp.patch({ foo: 'bar' }, [ { op: 'text', location: ['foo'], index: 0, delete: 'bar', insert: 'foo' } ]);
+      const result = jsondp.patch({ foo: 'bar' }, [
+        { op: 'delete-text', location: ['foo'], index: 0, value: 'bar' },
+        { op: 'insert-text', location: ['foo'], index: 0, value: 'foo' }
+      ]);
 
       expect(result).to.deep.equal({ foo: 'foo' });
     });
@@ -171,7 +174,10 @@ describe('patch', () => {
 
   describe('text replace in middle of string', () => {
     it('returns original with replaced text', () => {
-      const result = jsondp.patch({ foo: 'the quick lazy brown fox' }, [ { op: 'text', location: ['foo'], index: 4, delete: 'quick lazy', insert: 'sly' } ]);
+      const result = jsondp.patch({ foo: 'the quick lazy brown fox' }, [
+        { op: 'delete-text', location: ['foo'], index: 4, value: 'quick lazy' },
+        { op: 'insert-text', location: ['foo'], index: 4, value: 'sly' }
+      ]);
 
       expect(result).to.deep.equal({ foo: 'the sly brown fox' });
     });
@@ -179,7 +185,10 @@ describe('patch', () => {
 
   describe('text replace start of string in child object', () => {
     it('returns original with replaced text', () => {
-      const result = jsondp.patch({ prop: { foo: 'hello world' } }, [ { op: 'text', location: ['prop', 'foo'], index: 0, delete: 'hello', insert: 'mad' } ]);
+      const result = jsondp.patch({ prop: { foo: 'hello world' } }, [
+        { op: 'delete-text', location: ['prop', 'foo'], index: 0, value: 'hello' },
+        { op: 'insert-text', location: ['prop', 'foo'], index: 0, value: 'mad' }
+      ]);
 
       expect(result).to.deep.equal({ prop: { foo: 'mad world' } });
     });
@@ -187,7 +196,10 @@ describe('patch', () => {
 
   describe('text replace end of string in child object', () => {
     it('returns original with replaced text', () => {
-      const result = jsondp.patch({ prop: { foo: 'hello world' } }, [ { op: 'text', location: ['prop', 'foo'], index: 6, delete: 'world', insert: 'moto' } ]);
+      const result = jsondp.patch({ prop: { foo: 'hello world' } }, [
+        { op: 'delete-text', location: ['prop', 'foo'], index: 6, value: 'world' },
+        { op: 'insert-text', location: ['prop', 'foo'], index: 6, value: 'moto' }
+      ]);
 
       expect(result).to.deep.equal({ prop: { foo: 'hello moto' } });
     });

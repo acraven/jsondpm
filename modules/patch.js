@@ -3,11 +3,12 @@ const deepEqual = require('deep-equal');
 const locationUtils = require('./location-utils');
 
 const patchOps = {
-  add: patchAdd,
-  remove: patchRemove,
-  insert: patchInsert,
-  delete: patchDelete,
-  text: patchText
+  "add": patchAdd,
+  "remove": patchRemove,
+  "insert": patchInsert,
+  "delete": patchDelete,
+  "insert-text": patchInsertText,
+  "delete-text": patchDeleteText
 }
 
 function locateTarget(obj, location) {
@@ -68,11 +69,18 @@ function patchDelete(target, change) {
   target.property.splice(change.index, 1);
 }
 
-function patchText(target, change) {
-  // TODO: Should exist
+function patchInsertText(target, change) {
+  // TODO: Index should be within string
+
+  target.parent[target.key] = target.property.slice(0, change.index) + change.value + target.property.slice(change.index);
+}
+
+function patchDeleteText(target, change) {
+  // TODO: Index should be within string
+  // TODO: value should exist
   // TODO: Need to check value being removed matches change
 
-  target.parent[target.key] = target.property.slice(0, change.index) + (change.insert || '') + target.property.slice(change.index + (change.delete ? change.delete.length : 0));
+  target.parent[target.key] = target.property.slice(0, change.index) + target.property.slice(change.index + change.value.length);
 }
 
 function patch(source, changeset) {
