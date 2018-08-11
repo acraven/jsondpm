@@ -8,7 +8,7 @@ Diff, patch and merge JavaScript objects
 
 ## Publishing
 
-* Ensure the `master` branch build status [![Build Status](https://travis-ci.org/acraven/jsondpm.svg?branch=master)](https://travis-ci.org/acraven/jsondpm) is passing.
+* Ensure the `master` branch build status is passing. [![Build Status](https://travis-ci.org/acraven/jsondpm.svg?branch=master)](https://travis-ci.org/acraven/jsondpm)
 
 * Run `npm version (major|minor|patch) -m "Publish %s"` to increment the version in `package.json`, commit and tag the change.
 
