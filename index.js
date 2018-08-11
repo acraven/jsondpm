@@ -1,5 +1,7 @@
 'use strict';
 
-module.exports = function(foo) {
-   return foo;
+const patch = require('./modules/patch');
+
+module.exports = {
+  patch
 };
