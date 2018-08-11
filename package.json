@@ -4,7 +4,8 @@
   "description": "Diff, patch and merge JavaScript objects",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec './**/*.spec.js'"
+    "test": "mocha --reporter spec './**/*.spec.js'",
+    "watch": "mocha -w --reporter spec './**/*.spec.js'"
   },
   "repository": {
     "type": "git",

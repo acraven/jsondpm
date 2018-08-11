@@ -9,7 +9,7 @@ const patchOps = {
   text: patchText
 }
 
-function locate(obj, location) {
+function locateTarget(obj, location) {
   for (let i = 0; i < location.length - 1; i++) {
     // TODO:
     //   if (obj === null || typeof obj !== 'object') {
@@ -38,8 +38,7 @@ function patchAdd(target, change) {
     throw new Error(`Add mismatch, expecting to add '${locationUtils.serialise(change.location)}' with value '${change.value}' but '${target.key}' already exists with value '${target.property}'`);
   }
 
-  // TODO: Need to clone change.value if object type
-  target.parent[target.key] = change.value;
+  target.parent[target.key] = clone(change.value);
 }
 
 function patchRemove(target, change) {
@@ -57,8 +56,7 @@ function patchRemove(target, change) {
 function patchInsert(target, change) {
   // TODO: Should be type array, cannot be undefined or null, object, string etc.
 
-  // TODO: Need to clone change.value if object
-  target.property.splice(change.index, 0, change.value);
+  target.property.splice(change.index, 0, clone(change.value));
 }
 
 function patchDelete(target, change) {
@@ -83,7 +81,7 @@ function patch(source, changeset) {
   const result = clone(source);
 
   changeset.forEach(change => {
-    const target = locate(result, change.location);
+    const target = locateTarget(result, change.location);
     patchOps[change.op](target, change);
   });
 

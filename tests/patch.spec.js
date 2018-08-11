@@ -2,22 +2,20 @@ const chai = require('chai');
 const { expect } = chai;
 const jsondp = require('../index.js');
 
-// TODO: Make sure obj is cloned when adding
-
 describe('patch', () => {
-  it('returns undefined if delta is missing', () => {
+  it('returns undefined if changeset is missing', () => {
     const result = jsondp.patch({});
 
     expect(result).to.equal(undefined);
   });
 
-  it('returns original if delta is empty', () => {
+  it('returns original if changeset is empty', () => {
     const result = jsondp.patch({ foo: 'bar' }, []);
 
     expect(result).to.deep.equal({ foo: 'bar' });
   });
 
-  it('returns copy of original if delta is empty', () => {
+  it('returns copy of original if changeset is empty', () => {
     const source = { foo: 'bar' };
     const result = jsondp.patch(source, []);
 
@@ -68,6 +66,21 @@ describe('patch', () => {
     it('throws exception if trying to add existing key', () => {
       expect(() => { jsondp.patch({ prop: { child: { foo: 'bar' } } }, [ { op: 'add', location: ['prop','child','foo'], value: 'bar' } ]); })
         .to.throw('Add mismatch, expecting to add \'prop.child.foo\' with value \'bar\' but \'foo\' already exists with value \'bar\'');
+    });
+  });
+
+  describe('adding object', () => {
+    it('adds object to location', () => {
+      const result = jsondp.patch({}, [ { op: 'add', location: ['foo'], value: { bar: 'myBar' } } ]);
+  
+      expect(result.foo).to.deep.equal({ bar: 'myBar' });
+    });
+
+    it('clones change value before patching', () => {
+      const newObj = { bar: 'myBar' };
+      const result = jsondp.patch({}, [ { op: 'add', location: ['foo'], value: newObj } ]);
+  
+      expect(result.foo).not.to.equal(newObj);
     });
   });
 
@@ -209,6 +222,21 @@ describe('patch', () => {
     // TODO: Throw exception if not array
     // TODO: Throw exception if index < 0
     // TODO: Throw exception if index >= length
+  });
+
+  describe('inserting object', () => {
+    it('inserts object to location', () => {
+      const result = jsondp.patch({ foo: [] }, [ { op: 'insert', location: ['foo'], index: 0, value: { bar: 'myBar' } } ]);
+  
+      expect(result.foo[0]).to.deep.equal({ bar: 'myBar' });
+    });
+
+    it('clones change value before patching', () => {
+      const newObj = { bar: 'myBar' };
+      const result = jsondp.patch({ foo: [] }, [ { op: 'insert', location: ['foo'], index: 0, value: newObj } ]);
+  
+      expect(result.foo[0]).not.to.equal(newObj);
+    });
   });
 
   describe('delete from array', () => {
