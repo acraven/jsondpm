@@ -1,7 +1,7 @@
 {
   "name": "jsondpm",
   "version": "0.1.1",
-  "description": "",
+  "description": "Diff, patch and merge JavaScript objects",
   "main": "index.js",
   "scripts": {
     "test": "mocha --reporter spec './**/*.spec.js'"
