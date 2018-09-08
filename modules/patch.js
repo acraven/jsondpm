@@ -7,11 +7,14 @@ const patchOps = {
   "remove": patchRemove,
   "insert": patchInsert,
   "delete": patchDelete,
+  "move": patchMove,
   "insert-text": patchInsertText,
   "delete-text": patchDeleteText
 }
 
 function locateTarget(obj, location) {
+  // TODO: Location must be an array
+
   for (let i = 0; i < location.length - 1; i++) {
     // TODO:
     //   if (obj === null || typeof obj !== 'object') {
@@ -69,6 +72,15 @@ function patchDelete(target, change) {
   target.property.splice(change.index, 1);
 }
 
+function patchMove(target, change) {
+  // TODO: Should be type array, cannot be undefined or null, object, string etc.
+
+  const item = target.property[change.index];
+
+  target.property.splice(change.index, 1);
+  target.property.splice(change.index + change.offset, 0, item);
+}
+
 function patchInsertText(target, change) {
   // TODO: Index should be within string
   // TODO: Property should be string
@@ -89,6 +101,8 @@ function patch(source, changeset) {
   if (changeset === undefined) {
     return undefined;
   }
+
+  // TODO: Check changeset is an array
 
   const result = clone(source);
 
